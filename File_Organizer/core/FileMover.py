@@ -4,37 +4,29 @@ import shutil
 
 lock = threading.Lock()
 
-output_folders = {
-    "images": ["jpg", "jpeg", "png", "gif"],
-    "docs": ["txt", "pdf", "docx", "xlsx"],
-    "compressed_files": ["zip", "rar", "7z"]
-}
 
-def move_files(input_folder):
-    for f in os.listdir(input_folder):
-        ext = f.lower().split(".")[-1]
-        src = os.path.join(input_folder, f)
-        if not os.path.isfile(src):
-            continue
+def move_file(file_path, output_folders):
+    ext = file_path.split(".")[-1].lower()
+    dest_folder = None
 
-        dest_folder = None
-        for folder, extensions in output_folders.items():
-            if f in extensions:
-                dest_folder = folder
-                break
+    for folder, extensions in output_folders.items():
+        if ext in extensions:
+            dest_folder = folder
+            break
+            
+    if not dest_folder:
+        return
 
-        if dest_folder:
-            os.makedirs(dest_folder, exist_ok=True)
-            dst = os.path.join(dest_folder, f)
+    os.makedirs(dest_folder, exist_ok=True)
+    base_name = os.path.basename(file_path)
+    dest_path = os.path.join(dest_folder, base_name)
 
-            with lock:
-                count = 1
-                base_name, extn = os.path.splitext(f)
-                while os.path.exists(dst):
-                    dst = os.path.join(dest_folder, f"{base_name}_({count}){extn}")
-                    count += 1
+    with lock:
+        count = 1
+        name, extn = os.path.splitext(base_name)
+        while os.path.exists(dest_path):
+            dest_path = os.path.join(dest_folder, f"{name}_({count}){extn}")
+            count += 1
 
-                shutil.move(src, dst)
-                print(f"Přesunuto: {f} → {dest_folder}")
-
-    print("Hotovo!")
+        shutil.move(file_path, dest_path)
+        print(f"MOVE: {file_path} → {dest_path}")
