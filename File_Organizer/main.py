@@ -1,5 +1,5 @@
-from core.FileMover import move_images
+from core.FileMover import move_files
 
 if __name__ == "__main__":
     INPUT_FOLDER = r"C:\Users\Uzivatel\Documents"
-    move_images(INPUT_FOLDER)
+    move_files(INPUT_FOLDER)
