@@ -1,8 +1,9 @@
 import json
 import os
 from core.Organizer import organize_files
+from lib.ConfigLoader import ConfigLoader
 
-CONFIG_FILE = os.path.join(os.path.dirname(__file__), "config.json")
+CONFIG_FILE = ConfigLoader.get_config_path()
 
 with open(CONFIG_FILE, "r", encoding="utf-8") as f:
     config = json.load(f)
