@@ -1,5 +1,5 @@
 {
-  "input_folder": "C:\\Users\\Uzivatel\\Desktop\\Tes_Data",
+  "input_folder": "C:\\Users\\Uzivatel\\Desktop\\Test_Data",
   "num_threads": 4,
   "output_folders": {
     "Images": ["jpg", "png", "gif"],
