@@ -1,4 +1,5 @@
 # File Organizer
+Jakub Šrámek
 
 Program pro automatické přesouvání souborů do složek podle typu.
 
