@@ -6,6 +6,11 @@ class Validator:
 
     @staticmethod
     def validate(config):
+        '''
+        Validate the given configuration dictionary.
+        :param: config (dict): The raw configuration dictionary to validate.
+        :return: dict: A validated configuration dictionary with correct types and limits applied.
+        '''
         validated = {}
 
         input_folder = config.get("input_folder")

@@ -4,6 +4,13 @@ from queue import Queue
 from .Worker import worker
 
 def organize_files(input_folder, output_folders, num_threads):
+    '''
+    Organize files from the input folder into destination folders using multiple threads.
+    :param input_folder: Folder containing files to organize.
+    :param output_folders: Mapping of folder names to allowed extensions.
+    :param num_threads: Number of worker threads to use.
+    :return:
+    '''
     file_queue = Queue()
 
     for f in os.listdir(input_folder):

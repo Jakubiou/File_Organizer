@@ -3,10 +3,20 @@ import sys
 import json
 
 class ConfigLoader:
+    '''
+    Class responsible for locating and loading the configuration file.
+    '''
     def __init__(self):
+        '''
+         Initialize the ConfigLoader with an empty configuration.
+        '''
         self.config = {}
 
     def get_config_path(self):
+        '''
+        Get the path to the configuration file.
+        :return: Absolute path to the configuration file.
+        '''
         external_config = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "config.json")
         if os.path.exists(external_config):
             return external_config
@@ -17,6 +27,10 @@ class ConfigLoader:
         return os.path.join(os.path.dirname(__file__), "config.json")
 
     def load_config(self):
+        '''
+        Load the configuration from the configuration file.
+        :return: dict: Loaded configuration.
+        '''
         config_path = self.get_config_path()
         if not os.path.exists(config_path):
             raise FileNotFoundError(f"Config file not found: {config_path}")

@@ -6,6 +6,12 @@ lock = threading.Lock()
 
 
 def move_file(file_path, output_folders):
+    '''
+    Move a file to its corresponding folder based on file extension.
+    :param file_path: The full path to the file to move.
+    :param output_folders: Dictionary mapping folder names to allowed extensions.
+    :return:
+    '''
     ext = file_path.split(".")[-1].lower()
     dest_folder = None
 
