@@ -1,6 +1,6 @@
 from lib.ConfigLoader import ConfigLoader
 from File_Organizer.src.ConfigValidator import Validator
-from File_Organizer.src.core import organize_files
+from File_Organizer.src.core.Organizer import organize_files
 
 try:
     loader = ConfigLoader()
