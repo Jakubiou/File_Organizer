@@ -35,4 +35,4 @@ def move_file(file_path, output_folders):
             count += 1
 
         shutil.move(file_path, dest_path)
-        print(f"MOVE: {file_path} → {dest_path}")
+        print(f"MOVE: {file_path} -> {dest_path}")
