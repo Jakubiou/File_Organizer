@@ -1,6 +1,5 @@
 import os
-import threading
-from queue import Queue
+from multiprocessing import Process, Queue
 from .Worker import worker
 
 def organize_files(input_folder, output_folders, num_threads):
@@ -20,11 +19,9 @@ def organize_files(input_folder, output_folders, num_threads):
 
     threads = []
     for _ in range(num_threads):
-        t = threading.Thread(target=worker, args=(file_queue, output_folders))
+        t = Process(target=worker, args=(file_queue, output_folders))
         t.start()
         threads.append(t)
-
-    file_queue.join()
 
     for _ in threads:
         file_queue.put(None)

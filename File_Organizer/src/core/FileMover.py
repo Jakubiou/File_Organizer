@@ -1,8 +1,8 @@
 import os
-import threading
+from multiprocessing import Lock
 import shutil
 
-lock = threading.Lock()
+lock = Lock()
 
 
 def move_file(file_path, output_folders):
@@ -19,7 +19,7 @@ def move_file(file_path, output_folders):
         if ext in extensions:
             dest_folder = folder
             break
-            
+
     if not dest_folder:
         return
 
