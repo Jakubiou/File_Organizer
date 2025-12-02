@@ -13,9 +13,10 @@ if __name__ == "__main__":
         input_folder = config["input_folder"]
         num_threads = config["num_threads"]
         output_folders = config["output_folders"]
+        sort_by_date = config["sort_by_date"]
 
         print(f"Start přesunu souborů ze složky: {input_folder}")
-        organize_files(input_folder, output_folders, num_threads)
+        organize_files(input_folder, output_folders, num_threads, sort_by_date)
 
     except Exception as e:
         print(f"Chyba při načítání konfigurace nebo spuštění programu: {e}")
