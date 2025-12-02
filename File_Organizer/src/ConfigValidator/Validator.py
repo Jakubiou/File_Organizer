@@ -40,4 +40,9 @@ def validate(config):
             raise ValueError(f"Extensions for folder '{folder}' must be a list of strings")
     validated["output_folders"] = output_folders
 
+    sort_by_date = config.get("sort_by_date", False)
+    if not isinstance(sort_by_date, bool):
+        raise ValueError("'sort_by_date' must be true/false")
+    validated["sort_by_date"] = sort_by_date
+
     return validated
