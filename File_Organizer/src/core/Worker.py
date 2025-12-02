@@ -1,7 +1,6 @@
-from queue import Queue
 from .FileMover import move_file
 
-def worker(file_queue: Queue, output_folders):
+def worker(file_queue, output_folders, sort_by_date):
     '''
     Worker function for threading that processes files in the queue.
     :param file_queue: Queue containing file paths to move.
@@ -12,5 +11,4 @@ def worker(file_queue: Queue, output_folders):
         file_path = file_queue.get()
         if file_path is None:
             break
-        move_file(file_path, output_folders)
-        file_queue.task_done()
+        move_file(file_path, output_folders, sort_by_date)

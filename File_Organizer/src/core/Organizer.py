@@ -2,12 +2,12 @@ import os
 from multiprocessing import Process, Queue
 from .Worker import worker
 
-def organize_files(input_folder, output_folders, num_threads):
+def organize_files(input_folder, output_folders, num_processes, sort_by_date):
     '''
-    Organize files from the input folder into destination folders using multiple threads.
+    Organize files from the input folder into destination folders using multiple processes.
     :param input_folder: Folder containing files to organize.
     :param output_folders: Mapping of folder names to allowed extensions.
-    :param num_threads: Number of worker threads to use.
+    :param num_processes: Number of worker processes to use.
     :return:
     '''
     file_queue = Queue()
@@ -17,15 +17,15 @@ def organize_files(input_folder, output_folders, num_threads):
         if os.path.isfile(full_path):
             file_queue.put(full_path)
 
-    threads = []
-    for _ in range(num_threads):
-        t = Process(target=worker, args=(file_queue, output_folders))
-        t.start()
-        threads.append(t)
+    processes = []
+    for _ in range(num_processes):
+        p = Process(target=worker, args=(file_queue, output_folders, sort_by_date))
+        p.start()
+        processes.append(p)
 
-    for _ in threads:
+    for _ in processes:
         file_queue.put(None)
-    for t in threads:
-        t.join()
+    for p in processes:
+        p.join()
 
     print("Hotovo! Soubory byly přesunuty.")
