@@ -1,5 +1,6 @@
 {
-  "input_folder": "C:\\Users\\Uzivatel\\Documents",
+  "input_folder": "C:\\Users\\Uzivatel\\Desktop\\Test_Data",
+  "sort_by_date": true,
   "num_threads": 4,
   "output_folders": {
     "Images": ["jpg", "jpeg", "png", "gif"],
