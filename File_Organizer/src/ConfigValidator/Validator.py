@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 class Validator:
     MIN_THREADS = 1
@@ -40,9 +41,25 @@ def validate(config):
             raise ValueError(f"Extensions for folder '{folder}' must be a list of strings")
     validated["output_folders"] = output_folders
 
-    sort_by_date = config.get("sort_by_date", False)
-    if not isinstance(sort_by_date, bool):
-        raise ValueError("'sort_by_date' must be true/false")
-    validated["sort_by_date"] = sort_by_date
+    use_date_range = config.get("use_date_range", False)
+    if not isinstance(use_date_range, bool):
+        raise ValueError("'use_date_range' must be true/false")
+    validated["use_date_range"] = use_date_range
+
+    if use_date_range:
+        date_from = config.get("date_from", None)
+        date_to = config.get("date_to", None)
+
+        try:
+            date_from = datetime.strptime(date_from, "%Y-%m-%d")
+            date_to = datetime.strptime(date_to, "%Y-%m-%d")
+        except Exception:
+            raise ValueError("'date_from' and 'date_to' must be in format YYYY-MM-DD")
+
+        if date_from > date_to:
+            raise ValueError("date_from cannot be after date_to")
+
+        validated["date_from"] = date_from
+        validated["date_to"] = date_to
 
     return validated
