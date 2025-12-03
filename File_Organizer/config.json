@@ -1,6 +1,8 @@
 {
   "input_folder": "C:\\Users\\Uzivatel\\Desktop\\Test_Data",
-  "sort_by_date": true,
+  "date_from": "2025-12-01",
+  "date_to": "2025-12-30",
+  "use_date_range": true,
   "num_threads": 4,
   "output_folders": {
     "Images": ["jpg", "jpeg", "png", "gif"],
