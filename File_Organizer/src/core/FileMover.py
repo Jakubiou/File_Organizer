@@ -6,34 +6,36 @@ import datetime
 lock = Lock()
 
 
-def move_file(file_path, output_folders, sort_by_date):
+def move_file(file_path, output_folders, use_date_range, date_from, date_to):
     '''
     Move a file to its corresponding folder based on file extension.
     :param file_path: The full path to the file to move.
     :param output_folders: Dictionary mapping folder names to allowed extensions.
     :return:
     '''
-    if sort_by_date:
+
+    if use_date_range:
         stat = os.stat(file_path)
         created = datetime.datetime.fromtimestamp(stat.st_ctime)
 
-        date_folder = created.strftime("%Y-%m-%d")
+        if date_from <= created <= date_to:
+            folder_name = f"{date_from.strftime('%Y-%m-%d')}_to_{date_to.strftime('%Y-%m-%d')}"
+            os.makedirs(folder_name, exist_ok=True)
 
-        os.makedirs(date_folder, exist_ok=True)
+            base_name = os.path.basename(file_path)
+            dest_path = os.path.join(folder_name, base_name)
 
-        base_name = os.path.basename(file_path)
-        dest_path = os.path.join(date_folder, base_name)
+            with lock:
+                count = 1
+                name, extn = os.path.splitext(base_name)
+                while os.path.exists(dest_path):
+                    dest_path = os.path.join(folder_name, f"{name}_({count}){extn}")
+                    count += 1
 
-        with lock:
-            count = 1
-            name, extn = os.path.splitext(base_name)
-            while os.path.exists(dest_path):
-                dest_path = os.path.join(date_folder, f"{name}_({count}){extn}")
-                count += 1
+                shutil.move(file_path, dest_path)
+                print(f"[DATE RANGE MOVE] {file_path} -> {dest_path}")
 
-            shutil.move(file_path, dest_path)
-            print(f"[DATE MOVE] {file_path} -> {dest_path}")
-        return
+            return
 
     ext = file_path.split(".")[-1].lower()
     dest_folder = None
