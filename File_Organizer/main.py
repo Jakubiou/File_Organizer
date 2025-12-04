@@ -22,4 +22,4 @@ if __name__ == "__main__":
 
     except Exception as e:
         print(f"Chyba při načítání konfigurace nebo spuštění programu: {e}")
-    input("\nPress ENTER to exit...")
+
