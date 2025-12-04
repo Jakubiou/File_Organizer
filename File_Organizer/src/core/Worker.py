@@ -11,5 +11,7 @@ def worker(file_queue, output_folders, use_date_range, date_from, date_to):
         file_path = file_queue.get()
         if file_path is None:
             break
-        move_file(file_path, output_folders, use_date_range, date_from, date_to)
+        msg = move_file(file_path, output_folders, use_date_range, date_from, date_to)
+        if msg:
+            print(msg)
 
