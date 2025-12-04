@@ -1,9 +1,7 @@
 import os
-from multiprocessing import Lock
-import shutil
 import datetime
 
-lock = Lock()
+from File_Organizer.src.core.SafeFileMove import safe_move
 
 
 def move_file(file_path, output_folders, use_date_range, date_from, date_to):
@@ -20,44 +18,19 @@ def move_file(file_path, output_folders, use_date_range, date_from, date_to):
 
         if date_from <= created <= date_to:
             folder_name = f"{date_from.strftime('%Y-%m-%d')}_to_{date_to.strftime('%Y-%m-%d')}"
-            os.makedirs(folder_name, exist_ok=True)
-
-            base_name = os.path.basename(file_path)
-            dest_path = os.path.join(folder_name, base_name)
-
-            with lock:
-                count = 1
-                name, extn = os.path.splitext(base_name)
-                while os.path.exists(dest_path):
-                    dest_path = os.path.join(folder_name, f"{name}_({count}){extn}")
-                    count += 1
-
-                shutil.move(file_path, dest_path)
-                print(f"[DATE RANGE MOVE] {file_path} -> {dest_path}")
-
-            return
+            final_path = safe_move(file_path, folder_name)
+            return f"[DATE RANGE MOVE] {file_path} -> {final_path}"
 
     ext = file_path.split(".")[-1].lower()
-    dest_folder = None
 
+    dest_folder = None
     for folder, extensions in output_folders.items():
         if ext in extensions:
             dest_folder = folder
             break
 
     if not dest_folder:
-        return
+        return f"[SKIPPED] {file_path} (no folder for .{ext})"
 
-    os.makedirs(dest_folder, exist_ok=True)
-    base_name = os.path.basename(file_path)
-    dest_path = os.path.join(dest_folder, base_name)
-
-    with lock:
-        count = 1
-        name, extn = os.path.splitext(base_name)
-        while os.path.exists(dest_path):
-            dest_path = os.path.join(dest_folder, f"{name}_({count}){extn}")
-            count += 1
-
-        shutil.move(file_path, dest_path)
-        print(f"MOVE: {file_path} -> {dest_path}")
+    final_path = safe_move(file_path, dest_folder)
+    return f"[MOVE] {file_path} -> {final_path}"
