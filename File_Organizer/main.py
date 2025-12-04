@@ -11,14 +11,14 @@ if __name__ == "__main__":
         config = Validator.validate(raw_config)
 
         input_folder = config["input_folder"]
-        num_threads = config["num_threads"]
+        num_processes = config["num_processes"]
         output_folders = config["output_folders"]
         use_date_range = config["use_date_range"]
         date_from = config.get("date_from", None)
         date_to = config.get("date_to", None)
 
         print(f"Start přesunu souborů ze složky: {input_folder}")
-        organize_files(input_folder, output_folders, num_threads, use_date_range, date_from, date_to)
+        organize_files(input_folder, output_folders, num_processes, use_date_range, date_from, date_to)
 
     except Exception as e:
         print(f"Chyba při načítání konfigurace nebo spuštění programu: {e}")

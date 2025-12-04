@@ -2,8 +2,8 @@ import os
 from datetime import datetime
 
 class Validator:
-    MIN_THREADS = 1
-    MAX_THREADS = 16
+    MIN_PROCESSES = 1
+    MAX_PROCESSES = 16
 
 @staticmethod
 def validate(config):
@@ -19,16 +19,16 @@ def validate(config):
         raise ValueError(f"Invalid 'input_folder': {input_folder}")
     validated["input_folder"] = input_folder
 
-    num_threads = config.get("num_threads", 1)
-    if not isinstance(num_threads, int):
+    num_processes = config.get("num_processes", 1)
+    if not isinstance(num_processes, int):
         try:
-            num_threads = int(num_threads)
+            num_processes = int(num_processes)
         except (ValueError, TypeError):
-            raise ValueError(f"'num_threads' must be an integer, got: {num_threads}")
-    if num_threads < Validator.MIN_THREADS or num_threads > Validator.MAX_THREADS:
-        print(f"Warning: 'num_threads' out of bounds, resetting to 1")
-        num_threads = 1
-    validated["num_threads"] = num_threads
+            raise ValueError(f"'num_processes' must be an integer, got: {num_processes}")
+    if num_processes < Validator.MIN_PROCESSES or num_processes > Validator.MAX_PROCESSES:
+        print(f"Warning: 'num_processes' out of bounds, resetting to 1")
+        num_processes = 1
+    validated["num_processes"] = num_processes
 
     output_folders = config.get("output_folders", {})
     if not isinstance(output_folders, dict):
