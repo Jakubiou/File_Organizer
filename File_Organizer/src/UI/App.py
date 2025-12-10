@@ -7,7 +7,6 @@ from File_Organizer.src.core.Organizer import organize_files
 
 
 class App:
-
     def __init__(self):
         ctk.set_appearance_mode("Dark")
         ctk.set_default_color_theme("blue")
@@ -111,17 +110,16 @@ Archives:zip,rar,7z""")
             mapping[folder.strip()] = exts
         return mapping
 
-    def run_organizer(self, cfg):
-        organize_files(**cfg)
-
     def start_process(self):
         input_folder = self.input_entry.get()
+        if not input_folder or not os.path.isdir(input_folder):
+            self.shared_log.append("Chybná vstupní složka.")
+            return
+
         num_proc = int(self.proc_slider.get())
         use_date = self.use_date_var.get()
-
         date_from = self.date_from.get() if use_date else None
         date_to = self.date_to.get() if use_date else None
-
         output_map = self.parse_output()
 
         files = [f for f in os.listdir(input_folder)
@@ -136,9 +134,20 @@ Archives:zip,rar,7z""")
             use_date_range=use_date,
             date_from=date_from,
             date_to=date_to,
+            progress=self.progress,
+            shared_log=self.shared_log
         )
 
-        p = Process(target=self.run_organizer, args=(config,))
+        p = Process(target=organize_files, args=(
+            config['input_folder'],
+            config['output_folders'],
+            config['num_processes'],
+            config['use_date_range'],
+            config['date_from'],
+            config['date_to'],
+            config['progress'],
+            config['shared_log'],
+        ))
         p.start()
 
     def update_ui(self):
