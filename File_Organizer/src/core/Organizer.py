@@ -2,7 +2,7 @@ import os
 from multiprocessing import Process, Queue
 from .Worker import worker
 
-def organize_files(input_folder, output_folders, num_processes, use_date_range, date_from, date_to):
+def organize_files(input_folder, output_folders, num_processes, use_date_range, date_from, date_to, progress, shared_log):
     '''
     Organize files from the input folder into destination folders using multiple processes.
     :param input_folder: Folder containing files to organize.
@@ -19,7 +19,7 @@ def organize_files(input_folder, output_folders, num_processes, use_date_range, 
 
     processes = []
     for _ in range(num_processes):
-        p = Process(target=worker, args=(file_queue, output_folders, use_date_range, date_from, date_to))
+        p = Process(target=worker,args=(file_queue, output_folders, use_date_range,date_from, date_to, progress, shared_log))
         p.start()
         processes.append(p)
 
