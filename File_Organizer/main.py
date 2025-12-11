@@ -1,25 +1,5 @@
-from lib.ConfigLoader import ConfigLoader
-from File_Organizer.src.ConfigValidator import Validator
-from File_Organizer.src.core.Organizer import organize_files
-
+from File_Organizer.src.UI.App import App
 
 if __name__ == "__main__":
-    try:
-        loader = ConfigLoader()
-        raw_config = loader.load_config()
-
-        config = Validator.validate(raw_config)
-
-        input_folder = config["input_folder"]
-        num_processes = config["num_processes"]
-        output_folders = config["output_folders"]
-        use_date_range = config["use_date_range"]
-        date_from = config.get("date_from", None)
-        date_to = config.get("date_to", None)
-
-        print(f"Start přesunu souborů ze složky: {input_folder}")
-        organize_files(input_folder, output_folders, num_processes, use_date_range, date_from, date_to)
-
-    except Exception as e:
-        print(f"Chyba při načítání konfigurace nebo spuštění programu: {e}")
-
+    app = App()
+    app.run()
