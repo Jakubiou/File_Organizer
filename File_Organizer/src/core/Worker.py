@@ -1,6 +1,6 @@
 from .FileMover import move_file
 
-def worker(file_queue, output_folders, use_date_range, date_from, date_to,progress, shared_log):
+def worker(file_queue, output_folders, mode,date_from, date_to, max_size,progress, shared_log):
     '''
     Worker function for threading that processes files in the queue.
     :param file_queue: Queue containing file paths to move.
@@ -12,7 +12,7 @@ def worker(file_queue, output_folders, use_date_range, date_from, date_to,progre
         if file_path is None:
             break
 
-        msg = move_file(file_path, output_folders, use_date_range, date_from, date_to)
+        msg = move_file(file_path,output_folders,mode,date_from,date_to,max_size)
 
         with progress.get_lock():
             progress.value += 1
