@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from tkinter import filedialog
-from multiprocessing import Value, Manager, Process
-import os
+from multiprocessing import Process, Value, Manager
+import os, datetime
 
 from File_Organizer.src.core.Organizer import organize_files
 
@@ -12,152 +12,118 @@ class App:
         ctk.set_default_color_theme("blue")
 
         self.root = ctk.CTk()
-        self.root.title("File Organizer UI")
-        self.root.geometry("750x600")
+        self.root.title("File Organizer")
+        self.root.geometry("700x600")
 
-        self.progress = Value('i', 0)
-        self.total_files = Value('i', 1)
-
-        self.manager = Manager()
-        self.shared_log = self.manager.list()
+        self.progress = Value("i", 0)
+        self.total = Value("i", 1)
+        self.log = Manager().list()
 
         self.build_ui()
-
-    def build_ui(self):
-        self.input_label = ctk.CTkLabel(self.root, text="Input folder:")
-        self.input_label.pack(pady=5)
-
-        self.input_entry = ctk.CTkEntry(self.root, width=400)
-        self.input_entry.pack()
-
-        self.browse_btn = ctk.CTkButton(
-            self.root, text="Vybrat složku", command=self.pick_folder)
-        self.browse_btn.pack(pady=5)
-
-        self.proc_label = ctk.CTkLabel(self.root, text="Počet procesů:")
-        self.proc_label.pack()
-
-        frame = ctk.CTkFrame(self.root)
-        frame.pack()
-
-        self.proc_slider = ctk.CTkSlider(
-            frame, from_=1, to=16, number_of_steps=15,
-            command=self.update_process_label
-        )
-        self.proc_slider.set(4)
-        self.proc_slider.pack(side="left", padx=5, pady=5)
-
-        self.proc_num_label = ctk.CTkLabel(frame, text="4")
-        self.proc_num_label.pack(side="left", padx=5)
-
-        self.use_date_var = ctk.BooleanVar()
-        self.date_checkbox = ctk.CTkCheckBox(
-            self.root, text="Použít datumové rozmezí",
-            variable=self.use_date_var
-        )
-        self.date_checkbox.pack(pady=5)
-
-        self.date_from = ctk.CTkEntry(self.root, placeholder_text="Od (YYYY-MM-DD)")
-        self.date_from.pack()
-
-        self.date_to = ctk.CTkEntry(self.root, placeholder_text="Do (YYYY-MM-DD)")
-        self.date_to.pack()
-
-        self.output_label = ctk.CTkLabel(self.root, text="Output složky (Název:ext,ext):")
-        self.output_label.pack(pady=5)
-
-        self.output_text = ctk.CTkTextbox(self.root, height=120, width=500)
-        self.output_text.insert("0.0",
-"""Images:jpg,jpeg,png,gif
-Docs:txt,pdf,docx,xlsx
-Archives:zip,rar,7z""")
-        self.output_text.pack()
-
-        self.log_label = ctk.CTkLabel(self.root, text="Log:")
-        self.log_label.pack(pady=5)
-
-        self.log_box = ctk.CTkTextbox(self.root, height=150, width=600)
-        self.log_box.pack()
-
-        self.progress_bar = ctk.CTkProgressBar(self.root, width=500)
-        self.progress_bar.set(0)
-        self.progress_bar.pack(pady=10)
-
-        self.start_btn = ctk.CTkButton(
-            self.root, text="Start", command=self.start_process
-        )
-        self.start_btn.pack(pady=10)
-
         self.root.after(200, self.update_ui)
 
-    def update_process_label(self, value):
-        self.proc_num_label.configure(text=str(int(float(value))))
+    def build_ui(self):
+        self.entry("Input folder")
+        ctk.CTkButton(self.root, text="Vybrat", command=self.pick).pack()
 
-    def pick_folder(self):
+        self.slider = ctk.CTkSlider(self.root, 1, 16, command=self.update_label)
+        self.slider.set(4)
+        self.slider.pack()
+        self.proc_label = ctk.CTkLabel(self.root, text="4")
+        self.proc_label.pack()
+
+        self.mode = ctk.StringVar(value="type")
+        for text, val in [("Typ", "type"), ("Datum", "date"), ("Velikost", "size")]:
+            ctk.CTkRadioButton(self.root, text=text, variable=self.mode, value=val).pack()
+
+        self.date_from = ctk.CTkEntry(self.root, placeholder_text="YYYY-MM-DD")
+        self.date_to = ctk.CTkEntry(self.root, placeholder_text="YYYY-MM-DD")
+        self.size = ctk.CTkEntry(self.root, placeholder_text="Max MB")
+
+        self.date_from.pack()
+        self.date_to.pack()
+        self.size.pack()
+
+        self.output = ctk.CTkTextbox(self.root, height=80)
+        self.output.insert("0.0", "Images:jpg,png\nDocs:txt,pdf")
+        self.output.pack()
+
+        self.log_box = ctk.CTkTextbox(self.root, height=150)
+        self.log_box.pack()
+
+        self.bar = ctk.CTkProgressBar(self.root)
+        self.bar.pack(pady=10)
+
+        ctk.CTkButton(self.root, text="START", command=self.start).pack()
+
+    def entry(self, text):
+        ctk.CTkLabel(self.root, text=text).pack()
+        self.input = ctk.CTkEntry(self.root, width=400)
+        self.input.pack()
+
+    def pick(self):
         path = filedialog.askdirectory()
         if path:
-            self.input_entry.delete(0, "end")
-            self.input_entry.insert(0, path)
+            self.input.delete(0, "end")
+            self.input.insert(0, path)
+
+    def update_label(self, v):
+        self.proc_label.configure(text=str(int(v)))
 
     def parse_output(self):
-        lines = self.output_text.get("0.0", "end").strip().split("\n")
-        mapping = {}
-        for line in lines:
-            if ":" not in line:
-                continue
-            folder, ext_raw = line.split(":")
-            exts = [e.strip() for e in ext_raw.split(",")]
-            mapping[folder.strip()] = exts
-        return mapping
+        result = {}
+        for line in self.output.get("0.0", "end").splitlines():
+            if ":" in line:
+                k, v = line.split(":")
+                result[k] = v.split(",")
+        return result
 
-    def start_process(self):
-        input_folder = self.input_entry.get()
-        if not input_folder or not os.path.isdir(input_folder):
-            self.shared_log.append("Chybná vstupní složka.")
+    def start(self):
+        folder = self.input.get()
+        if not os.path.isdir(folder):
+            self.log.append("Neplatná složka")
             return
 
-        num_proc = int(self.proc_slider.get())
-        use_date = self.use_date_var.get()
-        date_from = self.date_from.get() if use_date else None
-        date_to = self.date_to.get() if use_date else None
-        output_map = self.parse_output()
+        mode = self.mode.get()
+        date_from = date_to = size = None
 
-        files = [f for f in os.listdir(input_folder)
-                 if os.path.isfile(os.path.join(input_folder, f))]
-        self.total_files.value = len(files)
+        try:
+            if mode == "date":
+                date_from = datetime.datetime.fromisoformat(self.date_from.get())
+                date_to = datetime.datetime.fromisoformat(self.date_to.get())
+            if mode == "size":
+                size = float(self.size.get())
+        except:
+            self.log.append("Špatný vstup")
+            return
+
+        files = [f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))]
+        self.total.value = len(files)
         self.progress.value = 0
+        self.log[:] = []
 
-        config = dict(
-            input_folder=input_folder,
-            output_folders=output_map,
-            num_processes=num_proc,
-            use_date_range=use_date,
-            date_from=date_from,
-            date_to=date_to,
-            progress=self.progress,
-            shared_log=self.shared_log
-        )
-
-        p = Process(target=organize_files, args=(
-            config['input_folder'],
-            config['output_folders'],
-            config['num_processes'],
-            config['use_date_range'],
-            config['date_from'],
-            config['date_to'],
-            config['progress'],
-            config['shared_log'],
-        ))
-        p.start()
+        Process(
+            target=organize_files,
+            args=(
+                folder,
+                self.parse_output(),
+                int(self.slider.get()),
+                mode,
+                date_from,
+                date_to,
+                size,
+                self.progress,
+                self.log,
+            ),
+        ).start()
 
     def update_ui(self):
-        if self.total_files.value > 0:
-            pr = self.progress.value / self.total_files.value
-            self.progress_bar.set(pr)
+        if self.total.value:
+            self.bar.set(self.progress.value / self.total.value)
 
         self.log_box.delete("0.0", "end")
-        for line in list(self.shared_log):
-            self.log_box.insert("end", line + "\n")
+        for l in self.log:
+            self.log_box.insert("end", l + "\n")
 
         self.root.after(200, self.update_ui)
 
