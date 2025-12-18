@@ -29,4 +29,5 @@ def organize_files(input_folder, output_folders, num_processes, mode, date_from,
     for p in processes:
         p.join()
 
-    print("Hotovo! Soubory byly přesunuty.")
+    shared_log.append("Hotovo! Soubory byly přesunuty.")
+
