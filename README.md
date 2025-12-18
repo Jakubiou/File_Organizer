@@ -1,30 +1,100 @@
-# File Organizer
+# File Organizer  
 Jakub Šrámek
 
-Program pro automatické přesouvání souborů do složek podle typu.
+Program pro automatickou organizaci souborů pomocí grafického uživatelského rozhraní.
 
 ---
 
 ## Popis
 
-Tento projekt umožňuje:
+Tento projekt slouží k organizaci souborů ve zvolené složce.  
+Uživatel si vše nastavuje přímo v grafickém rozhraní, není potřeba upravovat žádné konfigurační soubory.
 
-- organizovat soubory v zadané složce (`input_folder`) do podsložek podle typu (např. obrázky, dokumenty, archivy),
-- používat více vláken pro rychlejší přesun souborů,
-- měnit konfiguraci pomocí `dist/config.json`.
+Program umožňuje:
 
-Projekt je připraven jako **Python projekt + hotový EXE v `dist/`**.
+- vybrat vstupní složku pomocí UI,
+- organizovat soubory podle:
+  - typu souboru (přípona),
+  - data vytvoření,
+  - velikosti souboru,
+- zvolit počet procesů pro rychlejší zpracování,
+- sledovat průběh pomocí progress baru,
+- zobrazit průběh a výsledky v logu aplikace.
+
+Projekt je vytvořen v Pythonu a používá `multiprocessing` pro paralelní zpracování souborů.
 
 ---
 
-## Konfigurace (`dist/config.json`)
+## Použití programu
 
-Tento soubor určuje, odkud se mají soubory brát a kam se mají přesouvat.  
-Stačí upravit hodnoty podle potřeby.
+### 1. Spuštění aplikace
 
-input_folder -> cesta ke složce, ze které se soubory přesouvají
+Program se spouští spuštěním exe souboru v disc s nazvem main.exe.  
+Po spuštění se otevře grafické okno **File Organizer UI**.
 
-num_threads -> počet vláken pro rychlejší přesun souborů
+---
 
-output_folders -> mapování cílových složek na typy souborů
+### 2. Výběr vstupní složky
 
+- Klikni na tlačítko **Vybrat složku**
+- Vyber složku, ve které chceš organizovat soubory
+
+---
+
+### 3. Nastavení počtu procesů
+
+- Pomocí posuvníku nastav počet procesů
+- Vyšší počet procesů znamená rychlejší zpracování (záleží na výkonu počítače)
+
+---
+
+### 4. Volba způsobu organizace
+
+#### Podle typu souboru
+
+- Soubory se přesouvají podle přípony
+- Mapování cílových složek a přípon se nastavuje v textovém poli **Output složky**
+
+Příklad:
+
+
+Images:jpg,jpeg,png
+Docs:txt,pdf,docx
+Archives:zip,rar
+
+
+---
+
+#### Podle data
+
+- Přesune soubory vytvořené v zadaném časovém intervalu
+- Datum se zadává ve formátu:
+
+
+YYYY-MM-DD
+
+
+---
+
+#### Podle velikosti souboru
+
+- Přesune soubory menší nebo rovné zadané velikosti
+- Velikost se zadává v MB
+
+---
+
+### 5. Spuštění organizace
+
+- Klikni na tlačítko **Start**
+- Program začne zpracovávat soubory
+
+---
+
+## Průběh a výstup
+
+- **Progress bar** zobrazuje průběh zpracování
+- **Log** zobrazuje:
+  - přesunuté soubory,
+  - přeskočené soubory,
+  - chybové hlášky,
+  - konečný výsledek
