@@ -1,10 +1,21 @@
 import customtkinter as ctk
 
 class UIBuild:
+    '''
+    Responsible for creating and laying out all GUI widgets.
+    Does not contain application logic.
+    '''
     def __init__(self, root):
         self.root = root
 
     def build(self, handlers):
+        '''
+        Builds the complete graphical interface and connects
+        UI widgets to their respective event handlers.
+        :param handlers: Instance of AppHandlers handling UI events
+        :return:
+        '''
+
         ctk.CTkLabel(self.root, text="Input folder:").pack(pady=5)
 
         self.input_entry = ctk.CTkEntry(self.root, width=420)

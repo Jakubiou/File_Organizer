@@ -2,23 +2,39 @@ import os
 import datetime
 from multiprocessing import Process
 from File_Organizer.src.core.Organizer import organize_files
+from tkinter import filedialog
 
 class AppHandlers:
+    '''
+    Handles all user interactions and events triggered from the GUI.
+    '''
     def __init__(self, ui, state):
         self.ui = ui
         self.state = state
 
     def update_process_label(self, value):
+        '''
+         Updates the label displaying the selected number of processes when the slider value changes.
+        :param value: Current slider value
+        :return: number  of processes
+        '''
         self.ui.proc_num_label.configure(text=str(int(float(value))))
 
     def pick_folder(self):
-        from tkinter import filedialog
+        '''
+        Picks the folder selected by the user.
+        :return:
+        '''
         path = filedialog.askdirectory()
         if path:
             self.ui.input_entry.delete(0, "end")
             self.ui.input_entry.insert(0, path)
 
     def parse_output(self):
+        '''
+        Parses the output from the GUI.
+        :return:
+        '''
         mapping = {}
         lines = self.ui.output_text.get("0.0", "end").strip().split("\n")
         for line in lines:
@@ -31,6 +47,10 @@ class AppHandlers:
         return mapping
 
     def start_process(self):
+        '''
+        Starts the GUI event loop.
+        :return:
+        '''
         input_folder = self.ui.input_entry.get()
         if not os.path.isdir(input_folder):
             self.state.shared_log.append("Invalid input folder.")
