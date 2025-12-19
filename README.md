@@ -29,7 +29,7 @@ Projekt je vytvořen v Pythonu a používá `multiprocessing` pro paralelní zpr
 
 ### 1. Spuštění aplikace
 
-Program se spouští spuštěním exe souboru v disc s nazvem main.exe.  
+Program se spouští spuštěním exe souboru v dist s nazvem FileOrganizer.exe.  
 Po spuštění se otevře grafické okno **File Organizer UI**.
 
 ---
