@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from File_Organizer.src.UI.ui_builder import UIBuild
+from File_Organizer.src.lib.ui_builder import UIBuild
 from File_Organizer.src.UI.handlers import AppHandlers
 from File_Organizer.src.UI.state import AppState
 
